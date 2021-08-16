@@ -106,3 +106,8 @@ public class PongScript : NetworkScript
 There's a second example script in the repo.
 
 Enjoy!
+
+### Custom serialization
+I used the default Stride binary serialization for sending messages across the network - it's very efficient. If you're gonna use it remember about putting `[DataContract]` on your message classes. Also the server and client must have the same version of the class, because it's definition is hashed and that's how serialization system figures out the type of the serialized object.
+
+You can write your own serialization provider if you wish. Just implement `Stride.Networking.Simple.Serialization.INetworkSerializationProvider` and add it to the services collection before the first network script is invoked.
