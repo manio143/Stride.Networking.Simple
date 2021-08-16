@@ -3,6 +3,10 @@ using Stride.Core.Serialization;
 
 namespace Stride.Networking.Simple.Serialization
 {
+    /// <summary>
+    /// Stride serialization - custom classes need <see cref="Stride.Core.DataContractAttribute"/> to be used with it.
+    /// Also note that's it requires the client and server to use exactly the same version of a type.
+    /// </summary>
     public class DefaultBinarySerializationProvider : INetworkSerializationProvider
     {
         public T Deserialize<T>(byte[] data)

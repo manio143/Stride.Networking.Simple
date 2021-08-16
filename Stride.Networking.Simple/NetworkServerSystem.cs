@@ -7,6 +7,9 @@ using Stride.Engine.Network;
 
 namespace Stride.Networking.Simple
 {
+    /// <summary>
+    /// Server class - manages connections and processes messages.
+    /// </summary>
     public sealed class NetworkServerSystem : IDisposable
     {
         private static ILogger logger = GlobalLogger.GetLogger(nameof(NetworkServerSystem));
@@ -29,6 +32,11 @@ namespace Stride.Networking.Simple
         public event Action<NetworkConnection> ConnectionOpened;
         public event Action<NetworkConnection> ConnectionClosed;
 
+        /// <summary>
+        /// Tries to open the server.
+        /// </summary>
+        /// <param name="port">Port.</param>
+        /// <returns><c>false</c> if server has been opened already, <c>true</c> when server has been opened.</returns>
         public async Task<bool> OpenAsync(int port)
         {
             if (this.initialized)
@@ -90,7 +98,8 @@ namespace Stride.Networking.Simple
                         {
                             handler = initializer(this.services, connection);
                             connection.Handlers.Add(message.HandlerId, handler);
-                            _ = Task.Run(handler.Execute); // start execution on the thread pool
+                            // start execution on the thread pool and call cancel when script is finished
+                            _ = Task.Run(() => handler.Execute().ContinueWith(_ => handler.Cancel()));
                             handlerStarted = true;
                         }
                     }

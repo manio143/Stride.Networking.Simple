@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using Stride.Core;
 
 namespace Stride.Networking.Simple
 {
+    /// <summary>
+    /// A wrapper around a dictionary that holds recipes on how to initialize message handlers.
+    /// </summary>
     public class NetworkHandlerFactory
     {
         private Dictionary<object, Func<IServiceRegistry, NetworkConnection, NetworkScript>> factories = new();
@@ -24,19 +26,6 @@ namespace Stride.Networking.Simple
             where THandlerRequest : Enum
         {
             this.factories.Remove(request);
-        }
-
-        private class EnumEqualityComparer : EqualityComparer<object>
-        {
-            public override bool Equals(object x, object y)
-            {
-                return (x as IComparable).CompareTo(y) == 0;
-            }
-
-            public override int GetHashCode([DisallowNull] object obj)
-            {
-                return obj.GetHashCode();
-            }
         }
     }
 }

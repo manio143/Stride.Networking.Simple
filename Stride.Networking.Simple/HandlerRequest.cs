@@ -5,6 +5,10 @@ using Stride.Core.Serialization;
 
 namespace Stride.Networking.Simple
 {
+    /// <summary>
+    /// This class manages serialization of handler requests - it's independent of custom serializers.
+    /// A HandlerRequest is basically a serialization of a typed enum.
+    /// </summary>
     [DataContract]
     internal struct HandlerRequest
     {

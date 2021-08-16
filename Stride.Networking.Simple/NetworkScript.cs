@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Stride.Core;
 using Stride.Engine;
@@ -8,6 +7,12 @@ using Stride.Networking.Simple.Serialization;
 
 namespace Stride.Networking.Simple
 {
+    /// <summary>
+    /// Base class for custom scripts that talk with the server.
+    /// This class has two entry points:
+    ///  * constructor with two arguments - usually for the server
+    ///  * base.Start() - invoked by the ScriptSystem on the client
+    /// </summary>
     public class NetworkScript : StartupScript
     {
         private NetworkConnection networkConnection;
@@ -33,6 +38,9 @@ namespace Stride.Networking.Simple
         [DataMemberIgnore]
         public Guid ScriptId { get; internal protected set; } = Guid.NewGuid();
 
+        /// <summary>
+        /// What happens when we receive different data than expected.
+        /// </summary>
         [DataMember(1000)]
         public OnError OnDeserializationError { get; set; }
 
@@ -104,10 +112,14 @@ namespace Stride.Networking.Simple
                 }
                 catch (Exception ex) when (ex is not OutOfMemoryException)
                 {
+                    Log.Error($"An exception occured during deserialization of a message of type {typeof(TMessage)}", ex);
+
                     if (this.OnDeserializationError == OnError.Stop)
                         throw;
                 }
-            } while (true);
+            } while (!IsCancelled);
+
+            throw new OperationCanceledException();
         }
 
         internal void Handle(byte[] data)
